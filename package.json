@@ -7,8 +7,16 @@
       "scrypted-deploy": "scrypted-deploy",
       "scrypted-webpack": "scrypted-webpack"
    },
+   "keywords": [
+      "scrypted",
+      "plugin"
+   ],
+   "scrypted": {
+      "name": "Scrypted Visual Studio Code Sample Library",
+      "type": "Library"
+   },
    "devDependencies": {
-      "scrypted-deploy": "^1.0.6"
+      "scrypted-deploy": "^1.1.0"
    },
    "dependencies": {
       "myq-api": "0.0.2"
