@@ -25,9 +25,12 @@ function VirtualDevice() {
 
     try {
       this.deviceId = scriptConfiguration.getInt('deviceId');
-      log.i(`controlling garage door: ${this.deviceId}`);
-      // all configured successfully, can wait for commands now.
-      return;
+      if (this.deviceId) {
+        log.i(`controlling garage door: ${this.deviceId}`);
+        // all configured successfully, can wait for commands now.
+        return;
+      }
+      log.i('No "deviceId" Script Setting found. Searching for default door');
     }
     catch (e) {
       log.e('The existing "deviceId" script configuration value was invalid: ' + e);
@@ -37,6 +40,10 @@ function VirtualDevice() {
   
     account.getDevices([17])
     .then((result) => {
+      if (!result) {
+        log.e('Unable to query MyQ service. Are your "username" and "password" correct?');
+        return;
+      }
       result = result.devices;
       if (result.length == 0) {
         log.e('No doors found.');
@@ -107,4 +114,4 @@ VirtualDevice.prototype.open = function() {
   });
 };
 
-exports.result = new VirtualDevice();
+export default new VirtualDevice();

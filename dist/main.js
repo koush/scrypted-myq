@@ -1261,8 +1261,12 @@ __webpack_require__.r(__webpack_exports__);
 var username = scriptConfiguration.getString('username');
 var password = scriptConfiguration.getString('password');
 
-if (!username || !password) {
-  throw new Error('The "username" and/or "password" script configuration values are missing..');
+if (!username) {
+  throw new Error('The "username" Script Setting values is missing.');
+}
+
+if (!password) {
+  throw new Error('The "password" Script Setting values is missing.');
 }
 
 function VirtualDevice() {
@@ -1274,9 +1278,14 @@ function VirtualDevice() {
 
     try {
       _this.deviceId = scriptConfiguration.getInt('deviceId');
-      log.i("controlling garage door: ".concat(_this.deviceId)); // all configured successfully, can wait for commands now.
 
-      return;
+      if (_this.deviceId) {
+        log.i("controlling garage door: ".concat(_this.deviceId)); // all configured successfully, can wait for commands now.
+
+        return;
+      }
+
+      log.i('No "deviceId" Script Setting found. Searching for default door');
     } catch (e) {
       log.e('The existing "deviceId" script configuration value was invalid: ' + e);
     }
@@ -1351,7 +1360,7 @@ VirtualDevice.prototype.open = function () {
   });
 };
 
-exports.result = new VirtualDevice();
+/* harmony default export */ __webpack_exports__["default"] = (new VirtualDevice());
 
 /***/ }),
 /* 33 */
