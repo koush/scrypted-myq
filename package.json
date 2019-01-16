@@ -16,7 +16,7 @@
       "type": "Library"
    },
    "devDependencies": {
-      "scrypted-deploy": "^1.1.0"
+      "scrypted-deploy": "^1.1.5"
    },
    "dependencies": {
       "myq-api": "0.0.2"
