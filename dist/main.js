@@ -1292,6 +1292,11 @@ function VirtualDevice() {
 
     log.i('The "deviceId" script configuration was not provided, listing devices to determine a default door.');
     account.getDevices([17]).then(function (result) {
+      if (!result) {
+        log.e('Unable to query MyQ service. Are your "username" and "password" correct?');
+        return;
+      }
+
       result = result.devices;
 
       if (result.length == 0) {
