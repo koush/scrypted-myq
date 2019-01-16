@@ -1,6 +1,6 @@
 {
    "name": "@scrypted/myq",
-   "version": "0.0.5",
+   "version": "0.0.7",
    "description": "A MyQ Garage plugin for Scrypted",
    "author": "Scrypted",
    "license": "Apache",
@@ -20,7 +20,8 @@
    ],
    "scrypted": {
       "name": "Scrypted Visual Studio Code Sample Library",
-      "type": "Device"
+      "type": "Device",
+      "interfaces": ["Entry"]
    },
    "devDependencies": {
       "scrypted-deploy": "^1.1.8"
