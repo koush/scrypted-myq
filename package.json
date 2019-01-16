@@ -1,4 +1,9 @@
 {
+   "name": "@scrypted/myq",
+   "version": "0.0.5",
+   "description": "A MyQ Garage plugin for Scrypted",
+   "author": "Scrypted",
+   "license": "Apache",
    "scripts": {
       "prepublish": "NODE_ENV=production scrypted-webpack",
       "prescrypted-vscode-launch": "scrypted-webpack",
@@ -9,15 +14,16 @@
       "scrypted-webpack": "scrypted-webpack"
    },
    "keywords": [
+      "myq",
       "scrypted",
       "plugin"
    ],
    "scrypted": {
       "name": "Scrypted Visual Studio Code Sample Library",
-      "type": "Library"
+      "type": "Device"
    },
    "devDependencies": {
-      "scrypted-deploy": "^1.1.5"
+      "scrypted-deploy": "^1.1.8"
    },
    "dependencies": {
       "myq-api": "0.0.2"
