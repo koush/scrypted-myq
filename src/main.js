@@ -8,12 +8,17 @@ import MyQ from 'myq-api';
 const username = scriptConfiguration.getString('username');
 const password = scriptConfiguration.getString('password');
 
+function alertAndThrow(msg) {
+  log.a(msg);
+  throw new Error(msg);
+}
+
 if (!username) {
-  throw new Error('The "username" Script Setting values is missing.');
+  alertAndThrow('The "username" Script Setting values is missing.');
 }
 
 if (!password) {
-  throw new Error('The "password" Script Setting values is missing.');
+  alertAndThrow('The "password" Script Setting values is missing.');
 }
 
 function VirtualDevice() {
