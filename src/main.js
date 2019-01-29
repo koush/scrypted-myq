@@ -5,8 +5,8 @@ import "core-js/modules/es6.promise";
 
 import MyQ from 'myq-api';
 
-const username = scriptConfiguration.getString('username');
-const password = scriptConfiguration.getString('password');
+const username = scriptSettings.getString('username');
+const password = scriptSettings.getString('password');
 
 function alertAndThrow(msg) {
   log.a(msg);
@@ -29,7 +29,7 @@ function VirtualDevice() {
     this.account = account;
 
     try {
-      this.deviceId = scriptConfiguration.getInt('deviceId');
+      this.deviceId = scriptSettings.getInt('deviceId');
       if (this.deviceId) {
         log.i(`controlling garage door: ${this.deviceId}`);
         // all configured successfully, can wait for commands now.
@@ -65,7 +65,7 @@ function VirtualDevice() {
 
       var r = result[0];
       log.i(`Door found. Setting "deviceId" script configuration value to ${r.id}: ${r.name}`);
-      scriptConfiguration.putInt('deviceId', r.id);
+      scriptSettings.putInt('deviceId', r.id);
       this.deviceId = r.id;
     })
     .catch((err) => {
