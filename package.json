@@ -21,10 +21,12 @@
    "scrypted": {
       "name": "MyQ Garage Controller",
       "type": "Device",
-      "interfaces": ["Entry"]
+      "interfaces": [
+         "Entry"
+      ]
    },
    "devDependencies": {
-      "scrypted-deploy": "^1.2.3"
+      "scrypted-deploy": "^1.2.7"
    },
    "dependencies": {
       "myq-api": "0.0.2"
