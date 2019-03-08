@@ -22,10 +22,20 @@ if (!password) {
 }
 
 function VirtualDevice() {
+  this.ensureLogin()
+  .catch();
+}
+
+VirtualDevice.prototype.ensureLogin = function() {
+  if (this.account) {
+    return Promise.resolve(this.account);
+  }
+
   var account = new MyQ(username, password);
   
-  account.login()
+  return account.login()
   .then((result) => {
+    log.i(`login result: ${JSON.stringify(result)}`);
     this.account = account;
 
     try {
@@ -33,18 +43,20 @@ function VirtualDevice() {
       if (this.deviceId) {
         log.i(`controlling garage door: ${this.deviceId}`);
         // all configured successfully, can wait for commands now.
-        return;
+        return Promise.resolve(this.account);
       }
       log.i('No "deviceId" Script Setting found. Searching for default door');
     }
     catch (e) {
       log.e('The existing "deviceId" script configuration value was invalid: ' + e);
+      throw e;
     }
 
     log.i('The "deviceId" script configuration was not provided, listing devices to determine a default door.');
   
-    account.getDevices([17])
+    return account.getDevices([7, 17])
     .then((result) => {
+      log.i(`device query: ${JSON.stringify(result)}`);
       if (!result) {
         log.e('Unable to query MyQ service. Are your "username" and "password" correct?');
         return;
@@ -52,7 +64,7 @@ function VirtualDevice() {
       result = result.devices;
       if (result.length == 0) {
         log.e('No doors found.');
-        return;
+        return Promise.reject();
       }
       if (result.length != 1) {
         log.e('Multiple doors were found. The "deviceId" script configuration value must be provided from one of the following:')
@@ -60,25 +72,30 @@ function VirtualDevice() {
           var r = result[i];
           log.e(`${r.id}: ${r.name}`);
         }
-        return;
+        return Promise.reject();
       }
-
+  
       var r = result[0];
       log.i(`Door found. Setting "deviceId" script configuration value to ${r.id}: ${r.name}`);
       scriptSettings.putInt('deviceId', r.id);
       this.deviceId = r.id;
+
+      return this.account;
     })
-    .catch((err) => {
-      log.e('Error listing devices: ' + err);
-    }); 
   })
+  .then(() => this.refresh())
   .catch((err) => {
     log.e('Error logging in. Are the "username" and/or "password" script configuration values correct?\n' + err);
+    throw err;
   });
-}
+};
 
 // implementation of Entry
-VirtualDevice.prototype.close = function() {
+VirtualDevice.prototype.isEntryOpen = function() {
+  return this.doorState !== 2;
+};
+
+VirtualDevice.prototype.closeEntry = function() {
   if (!this.account) {
     log.e('could not close garage door, account login failed');
     return;
@@ -89,7 +106,8 @@ VirtualDevice.prototype.close = function() {
     return;
   }
 
-  this.account.setDoorState(this.deviceId, 0)
+  this.ensureLogin()
+  .then(() => this.account.setDoorState(this.deviceId, 0))
   .then((result) => {
     // command success
     log.i('garage door closed');
@@ -99,7 +117,7 @@ VirtualDevice.prototype.close = function() {
   });
 };
 
-VirtualDevice.prototype.open = function() {
+VirtualDevice.prototype.openEntry = function() {
   if (!this.account) {
     log.e('could not close, account login failed');
     return;
@@ -110,12 +128,38 @@ VirtualDevice.prototype.open = function() {
     return;
   }
 
-  this.account.setDoorState(this.deviceId, 1)
+  this.ensureLogin()
+  .then(() => this.account.setDoorState(this.deviceId, 1))
   .then((result) => {
     log.i('garage door opened');
   })
   .catch((err) => {
     log.e('garage door open failed: ' + err);
+  });
+};
+
+VirtualDevice.prototype.getEventSourceInterfaces = function() {
+  return ['Entry'];
+};
+
+VirtualDevice.prototype.getRefreshFrequency = function() {
+  return 60;
+};
+
+VirtualDevice.prototype.refresh = function() {
+  if (!this.account) {
+    return;
+  }
+
+  this.ensureLogin()
+  .then(() => this.account.getDoorState(this.deviceId))
+  .then((result) => {
+    log.i(`Refresh: ${JSON.stringify(result)}`);
+    this.doorState = result.doorState;
+    deviceManager.onDeviceEvent('Entry', this.isEntryOpen());
+  })
+  .catch((err) => {
+    log.e(`error getting door state: ${err}`);
   });
 };
 

@@ -1,6 +1,6 @@
 {
    "name": "@scrypted/myq",
-   "version": "0.1.2",
+   "version": "0.1.4",
    "description": "A MyQ Garage plugin for Scrypted",
    "author": "Scrypted",
    "license": "Apache",
@@ -22,11 +22,13 @@
       "name": "MyQ Garage Controller",
       "type": "Device",
       "interfaces": [
-         "Entry"
+         "Entry",
+         "Refresh",
+         "EventEmitter"
       ]
    },
    "devDependencies": {
-      "scrypted-deploy": "^1.2.7"
+      "@scrypted/sdk": "0.0.2"
    },
    "dependencies": {
       "myq-api": "0.0.2"
