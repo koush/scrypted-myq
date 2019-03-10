@@ -27,7 +27,7 @@ function VirtualDevice() {
 }
 
 VirtualDevice.prototype.ensureLogin = function() {
-  if (this.account) {
+  if (this.account || this.loginTokenTime < Date.now() - 60 * 60 * 1000) {
     return Promise.resolve(this.account);
   }
 
@@ -37,6 +37,7 @@ VirtualDevice.prototype.ensureLogin = function() {
   .then((result) => {
     log.i(`login result: ${JSON.stringify(result)}`);
     this.account = account;
+    this.loginTokenTime = Date.now();
 
     try {
       this.deviceId = scriptSettings.getInt('deviceId');
