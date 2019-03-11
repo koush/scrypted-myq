@@ -27,7 +27,8 @@ function VirtualDevice() {
 }
 
 VirtualDevice.prototype.ensureLogin = function() {
-  if (this.account || this.loginTokenTime < Date.now() - 60 * 60 * 1000) {
+  // 30 minute token it seems
+  if (this.account || this.loginTokenTime < Date.now() - 29 * 60 * 1000) {
     return Promise.resolve(this.account);
   }
 
@@ -156,8 +157,13 @@ VirtualDevice.prototype.refresh = function() {
   .then(() => this.account.getDoorState(this.deviceId))
   .then((result) => {
     log.i(`Refresh: ${JSON.stringify(result)}`);
-    this.doorState = result.doorState;
-    deviceManager.onDeviceEvent('Entry', this.isEntryOpen());
+    if (result.doorState !== undefined) {
+      this.doorState = result.doorState;
+      deviceManager.onDeviceEvent('Entry', this.isEntryOpen());
+    }
+    else {
+      delete this.account;
+    }
   })
   .catch((err) => {
     log.e(`error getting door state: ${err}`);
