@@ -1,8 +1,5 @@
 // webpack polyfill 'usage' does not seem to work on modules.
 // include directly.
-import "core-js/modules/es7.array.includes";
-import "core-js/modules/es6.promise";
-
 import MyQ from 'myq-api';
 
 const username = scriptSettings.getString('username');
@@ -21,12 +18,12 @@ if (!password) {
   alertAndThrow('The "password" Script Setting values is missing.');
 }
 
-function VirtualDevice() {
+function GarageController() {
   this.ensureLogin()
   .catch();
 }
 
-VirtualDevice.prototype.ensureLogin = function() {
+GarageController.prototype.ensureLogin = function() {
   // 30 minute token it seems
   if (this.account && this.loginTokenTime > Date.now() - 29 * 60 * 1000) {
     return Promise.resolve(this.account);
@@ -93,11 +90,11 @@ VirtualDevice.prototype.ensureLogin = function() {
 };
 
 // implementation of Entry
-VirtualDevice.prototype.isEntryOpen = function() {
+GarageController.prototype.isEntryOpen = function() {
   return this.doorState !== 2;
 };
 
-VirtualDevice.prototype.closeEntry = function() {
+GarageController.prototype.closeEntry = function() {
   if (!this.account) {
     log.e('could not close garage door, account login failed');
     return;
@@ -113,13 +110,14 @@ VirtualDevice.prototype.closeEntry = function() {
   .then((result) => {
     // command success
     log.i('garage door closed');
+    log.i(JSON.stringify(result));
   })
   .catch((err) => {
     log.e('garage door close failed: ' + err);
   });
 };
 
-VirtualDevice.prototype.openEntry = function() {
+GarageController.prototype.openEntry = function() {
   if (!this.account) {
     log.e('could not close, account login failed');
     return;
@@ -134,21 +132,22 @@ VirtualDevice.prototype.openEntry = function() {
   .then(() => this.account.setDoorState(this.deviceId, 1))
   .then((result) => {
     log.i('garage door opened');
+    log.i(JSON.stringify(result));
   })
   .catch((err) => {
     log.e('garage door open failed: ' + err);
   });
 };
 
-VirtualDevice.prototype.getEventSourceInterfaces = function() {
+GarageController.prototype.getEventSourceInterfaces = function() {
   return ['Entry'];
 };
 
-VirtualDevice.prototype.getRefreshFrequency = function() {
+GarageController.prototype.getRefreshFrequency = function() {
   return 60;
 };
 
-VirtualDevice.prototype.refresh = function() {
+GarageController.prototype.refresh = function() {
   if (!this.account) {
     return;
   }
@@ -170,4 +169,4 @@ VirtualDevice.prototype.refresh = function() {
   });
 };
 
-export default new VirtualDevice();
+export default new GarageController();

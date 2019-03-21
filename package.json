@@ -1,6 +1,6 @@
 {
    "name": "@scrypted/myq",
-   "version": "0.1.8",
+   "version": "0.1.9",
    "description": "A MyQ Garage plugin for Scrypted",
    "author": "Scrypted",
    "license": "Apache",
