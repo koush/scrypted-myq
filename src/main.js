@@ -28,7 +28,7 @@ function VirtualDevice() {
 
 VirtualDevice.prototype.ensureLogin = function() {
   // 30 minute token it seems
-  if (this.account || this.loginTokenTime < Date.now() - 29 * 60 * 1000) {
+  if (this.account && this.loginTokenTime > Date.now() - 29 * 60 * 1000) {
     return Promise.resolve(this.account);
   }
 
