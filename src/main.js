@@ -135,7 +135,8 @@ GarageController.prototype.openEntry = function() {
   })
   .catch((err) => {
     log.e('garage door open failed: ' + err);
-  });
+  })
+  .then(() => this.refresh());
 };
 
 GarageController.prototype.getRefreshFrequency = function() {
@@ -152,7 +153,7 @@ GarageController.prototype.refresh = function() {
   .then((result) => {
     log.i(`Refresh: ${JSON.stringify(result)}`);
     if (result.doorState !== undefined) {
-      this.entryOpen = result.doorState !== 2;
+      this.state.entryOpen = result.doorState !== 2;
     }
     else {
       delete this.account;
