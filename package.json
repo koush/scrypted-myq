@@ -23,12 +23,14 @@
       "type": "Device",
       "interfaces": [
          "Entry",
-         "Refresh",
-         "EventEmitter"
+         "Refresh"
+      ],
+      "events": [
+         "Entry"
       ]
    },
    "devDependencies": {
-      "@scrypted/sdk": "0.0.14"
+      "@scrypted/sdk": "0.0.16"
    },
    "dependencies": {
       "myq-api": "0.0.2"

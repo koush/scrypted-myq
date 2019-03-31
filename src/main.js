@@ -1,7 +1,9 @@
 // webpack polyfill 'usage' does not seem to work on modules.
 // include directly.
 import MyQ from 'myq-api';
+import sdk from '@scrypted/sdk';
 
+const {deviceManager} = sdk;
 const username = scriptSettings.getString('username');
 const password = scriptSettings.getString('password');
 
@@ -19,6 +21,7 @@ if (!password) {
 }
 
 function GarageController() {
+  this.state = deviceManager.getDeviceState();
   this.ensureLogin()
   .catch();
 }
@@ -89,11 +92,6 @@ GarageController.prototype.ensureLogin = function() {
   });
 };
 
-// implementation of Entry
-GarageController.prototype.isEntryOpen = function() {
-  return this.doorState !== 2;
-};
-
 GarageController.prototype.closeEntry = function() {
   if (!this.account) {
     log.e('could not close garage door, account login failed');
@@ -114,7 +112,8 @@ GarageController.prototype.closeEntry = function() {
   })
   .catch((err) => {
     log.e('garage door close failed: ' + err);
-  });
+  })
+  .then(() => this.refresh());
 };
 
 GarageController.prototype.openEntry = function() {
@@ -139,10 +138,6 @@ GarageController.prototype.openEntry = function() {
   });
 };
 
-GarageController.prototype.getEventSourceInterfaces = function() {
-  return ['Entry'];
-};
-
 GarageController.prototype.getRefreshFrequency = function() {
   return 60;
 };
@@ -157,8 +152,7 @@ GarageController.prototype.refresh = function() {
   .then((result) => {
     log.i(`Refresh: ${JSON.stringify(result)}`);
     if (result.doorState !== undefined) {
-      this.doorState = result.doorState;
-      deviceManager.onDeviceEvent('Entry', this.isEntryOpen());
+      this.entryOpen = result.doorState !== 2;
     }
     else {
       delete this.account;
