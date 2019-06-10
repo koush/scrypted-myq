@@ -1,6 +1,6 @@
 {
    "name": "@scrypted/myq",
-   "version": "0.1.12",
+   "version": "0.1.13",
    "description": "A MyQ Garage plugin for Scrypted",
    "author": "Scrypted",
    "license": "Apache",
@@ -27,7 +27,7 @@
       ]
    },
    "devDependencies": {
-      "@scrypted/sdk": "0.0.16"
+      "@scrypted/sdk": "0.0.23"
    },
    "dependencies": {
       "myq-api": "0.0.2"
