@@ -2,11 +2,11 @@
 // include directly.
 import MyQ from 'myq-api';
 import sdk, { ScryptedDeviceBase, DeviceProvider, Device, ScryptedDeviceType, Entry, Refresh, OnOff } from '@scrypted/sdk';
-const { scriptSettings, log } = sdk;
+const { log } = sdk;
 
 const {deviceManager} = sdk;
-const username = scriptSettings.getString('username');
-const password = scriptSettings.getString('password');
+const username = localStorage.getItem('username');
+const password = localStorage.getItem('password');
 
 function alertAndThrow(msg) {
   log.a(msg);
