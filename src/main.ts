@@ -48,21 +48,10 @@ class GarageController extends ScryptedDeviceBase implements DeviceProvider {
         }
         result = result.devices;
         for (var r of result) {
-          if (r.typeId == 3) {
+          if (r.state.door_state) {
             var info: Device = {
               name: r.name,
-              // native id is a number. make sure we pass a string.
-              nativeId: r.id.toString(),
-              interfaces: ['OnOff', 'Refresh'],
-              type: ScryptedDeviceType.Light,
-            }
-            this.devices[info.nativeId] = new GarageLight(this, info);
-          }
-          else if (r.typeId == 7 || r.typeId == 17) {
-            var info: Device = {
-              name: r.name,
-              // native id is a number. make sure we pass a string.
-              nativeId: r.id.toString(),
+              nativeId: r.serial_number,
               interfaces: ['Entry', 'Refresh'],
               type: ScryptedDeviceType.Entry,
             }
@@ -86,11 +75,11 @@ class GarageController extends ScryptedDeviceBase implements DeviceProvider {
       return Promise.resolve(this.account);
     }
   
-    var account = new MyQ(username, password);
+    var account = new MyQ();
     
-    return account.login()
+    return account.login(username, password)
     .then((result) => {
-      if (result.returnCode !== 0) {
+      if (result.code !== 'OK') {
         throw new Error(JSON.stringify(result));
       }
       log.i(`login result: ${JSON.stringify(result)}`);
@@ -139,10 +128,10 @@ class GarageDoor extends ScryptedDeviceBase implements Entry, Refresh {
   }
   
   closeEntry(): void {
-    this.doorStateCommand(0);
+    this.doorStateCommand(MyQ.actions.door.CLOSE);
   }
   openEntry(): void {
-    this.doorStateCommand(1);
+    this.doorStateCommand(MyQ.actions.door.OPEN);
   }
   getRefreshFrequency() {
     return 60;
@@ -152,9 +141,7 @@ class GarageDoor extends ScryptedDeviceBase implements Entry, Refresh {
     .then(() => this.controller.account.getDoorState(this.info.nativeId))
     .then((result) => {
       log.i(`Refresh: ${JSON.stringify(result)}`);
-      if (result.doorState !== undefined) {
-        this.entryOpen = result.doorState !== 2;
-      }
+      this.entryOpen = result.deviceState !== 'closed';
     })
     .catch((err) => {
       log.e(`error getting door state: ${err}`);

@@ -27,9 +27,9 @@
       ]
    },
    "devDependencies": {
-      "@scrypted/sdk": "0.0.26"
+      "@scrypted/sdk": "0.0.59"
    },
    "dependencies": {
-      "myq-api": "0.0.2"
+      "myq-api": "^2.0.2"
    }
 }
